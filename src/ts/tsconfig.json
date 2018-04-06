@@ -1,8 +1,10 @@
 {
     "compilerOptions": {
-        "lib": [
-            "es2015",
-            "dom"
-        ]
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "strictPropertyInitialization": true,
+        "noImplicitThis": true,
     }
 }

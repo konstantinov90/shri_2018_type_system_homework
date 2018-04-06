@@ -5,13 +5,18 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run build && mocha test",
-    "build": "tsc -p ./src/ts --outDir ./build"
+    "build:ts": "tsc -p ./src/ts --outDir ./build/ts",
+    "build:flow": "babel ./src/flow -d ./build/flow",
+    "flow": "flow"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-flow": "^6.23.0",
     "chai": "^4.1.2",
+    "flow-bin": "^0.69.0",
     "mocha": "^5.0.5",
     "typescript": "^2.8.1"
   }
