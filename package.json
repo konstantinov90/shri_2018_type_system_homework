@@ -1,0 +1,18 @@
+{
+  "name": "shri_2018_type_system_homework",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run build && mocha test",
+    "build": "tsc -p ./src/ts --outDir ./build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.0.5",
+    "typescript": "^2.8.1"
+  }
+}
