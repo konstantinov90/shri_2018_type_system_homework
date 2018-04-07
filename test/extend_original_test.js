@@ -1,7 +1,7 @@
 const mocha = require('mocha');
 const { expect } = require('chai');
 
-for (const module of [ '../src/js/extend_original', '../build/extend' ]) {
+for (const module of [ '../src/js/extend_original', '../build/flow/extend', '../build/ts/extend' ]) {
   const extend = require(module);
 
   describe(module, () => {
@@ -14,7 +14,7 @@ for (const module of [ '../src/js/extend_original', '../build/extend' ]) {
           },
         };
   
-        const ans = extend({}, true, obj);
+        const ans = extend(true, {}, obj);
         obj.b.c = 123;
         expect(ans).to.not.deep.equal(obj);
       });
@@ -79,7 +79,7 @@ for (const module of [ '../src/js/extend_original', '../build/extend' ]) {
         },
       };
       
-      expect(extend(init, true, extension1, extension2)).to.deep.equal({ a: { a: 1, b: 2, c: 3, d: 4 } });
+      expect(extend(true, init, extension1, extension2)).to.deep.equal({ a: { a: 1, b: 2, c: 3, d: 4 } });
     });
   
     it('should replace subobjects (when shallow)', () => {
@@ -95,7 +95,7 @@ for (const module of [ '../src/js/extend_original', '../build/extend' ]) {
         },
       };
       
-      expect(extend(init, false, extension)).to.deep.equal({ a: { c: 3 } });
+      expect(extend(false, init, extension)).to.deep.equal({ a: { c: 3 } });
     });
   
     it('should also extend arrays', () => {
@@ -106,7 +106,7 @@ for (const module of [ '../src/js/extend_original', '../build/extend' ]) {
         a: [ 10, 20, 30, 40 ],
       };
   
-      expect(extend(init, true, extension)).to.deep.equal({ a: [ 10, 20, 30, 40 ] });
+      expect(extend(true, init, extension)).to.deep.equal({ a: [ 10, 20, 30, 40 ] });
     });
   });
 }

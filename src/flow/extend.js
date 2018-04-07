@@ -3,11 +3,11 @@
 const hasOwnProperty: (k: string) => boolean = Object.prototype.hasOwnProperty;
 const toString: () => string = Object.prototype.toString;
 
-interface ISomeObject {
+type ISomeObject = {
     // можно предположить, что ключ может быть и сложным объектом,
     // но я остановлюсь на string
     [key: string]: any;
-}
+};
 
 /**
  * Проверяет, что переданный объект является "плоским" (т.е. созданным с помощью "{}"
@@ -35,45 +35,12 @@ function isPlainObject(obj: any): boolean {
  *      `null` или `undefined` игнорируются.
  * @returns {Object}
  */
-// объявляем несколько перегрузок для комбинаций до 5 объектов с или без deep
-// function extend<T: { key: string }>(deep: boolean, target: T, mixin1: T1): T & T1;
-
-// function extend <T extends ISomeObject, T1 extends ISomeObject>
-//     (target: T, mixin1: T1): T & T1;
-
-// function extend <T extends ISomeObject, T1 extends ISomeObject, T2 extends ISomeObject>
-//     (deep: boolean, target: T, mixin1: T1, mixin2: T2): T & T1 & T2;
-    
-// function extend <T extends ISomeObject, T1 extends ISomeObject, T2 extends ISomeObject>
-//     (target: T, mixin1: T1, mixin2: T2): T & T1 & T2;
-
-// function extend <T extends ISomeObject, T1 extends ISomeObject, T2 extends ISomeObject, T3 extends ISomeObject>
-//     (deep: boolean, target: T, mixin1: T1, mixin2: T2, mixin3: T3): T1 & T2 & T3;
-
-// function extend <T extends ISomeObject, T1 extends ISomeObject, T2 extends ISomeObject, T3 extends ISomeObject>
-//     (target: T, mixin1: T1, mixin2: T2, mixin3: T3): T1 & T2 & T3;
-
-// function extend <T extends ISomeObject, T1 extends ISomeObject, T2 extends ISomeObject, T3 extends ISomeObject, T4 extends ISomeObject>
-//     (deep: boolean, target: T, mixin1: T1, mixin2: T2, mixin3: T3, mixin4: T4): T & T1 & T2 & T3 & T4;
-
-// function extend <T extends ISomeObject, T1 extends ISomeObject, T2 extends ISomeObject, T3 extends ISomeObject, T4 extends ISomeObject>
-//     (target: T, mixin1: T1, mixin2: T2, mixin3: T3, mixin4: T4): T & T1 & T2 & T3 & T4;
-
-// function extend <T extends ISomeObject, T1 extends ISomeObject, T2 extends ISomeObject, T3 extends ISomeObject, T4 extends ISomeObject, T5 extends ISomeObject>
-//     (deep: boolean, target: T, mixin1: T1, mixin2: T2, mixin3: T3, mixin4: T4, mixin5: T5): T & T1 & T2 & T3 & T4 & T5;
-
-// function extend <T extends ISomeObject, T1 extends ISomeObject, T2 extends ISomeObject, T3 extends ISomeObject, T4 extends ISomeObject, T5 extends ISomeObject>
-//     (target: T, mixin1: T1, mixin2: T2, mixin3: T3, mixin4: T4, mixin5: T5): T & T1 & T2 & T3 & T4 & T5;
-//fallback сигнатура, которая обрабатывает более 5 объектов,
-// а также предусматривает случаи передачи null и undefined,
-// но не возвращает объединение интерфейсов =(
-// function extend <T extends boolean | ISomeObject>
-//     (targetOrDeep: T, mixin1OrTarget: T extends boolean? ISomeObject: ISomeObject | undefined | null, ...mixins: (ISomeObject | null | undefined)[]): ISomeObject;
-
-function extend(...args: Array<?boolean | ?{} | ?Array<any>>): ISomeObject {
-    let target = ((args[0]: any): boolean | ISomeObject);
-    let deep: boolean;
+// Flow кажется не умеет в перегрузки...
+const extend: (deepOrTarget: boolean | ISomeObject, targetOrMixin1: ISomeObject, ...args: Array<?ISomeObject>) => ISomeObject =
+function extend(...args: Array<?any>): ISomeObject {
+    let target = ((args[0]: any): ISomeObject | boolean);
     let i: number;
+    let deep: boolean;
 
     // Обрабатываем ситуацию глубокого копирования.
     if (typeof target === 'boolean') {
@@ -115,21 +82,36 @@ function extend(...args: Array<?boolean | ?{} | ?Array<any>>): ISomeObject {
 
     return (target: ISomeObject);
 };
-// console.log(extend([1, 2, 3], null, [15, 20, { a: 5 }, 147], { 4: 879 }));
 
 
 let res1 = extend(true, { a: 5 }, { b: 6, c: 123, d:466 });
-let res2 = extend({ a: 5 }, { b: 6 }, { a: 'a', b: 'abc' }, [ 11, 22, 33 ]);
 let res3 = extend(true, { a: 5 }, null, { b: 6 }, null, undefined, {c: 123, d: 435});
-let res4 = extend({ a: 5 }, null, { a: 10, b: 20 }, { a: [1,2,3] }, [4,5,6] );
 let res5 = extend({ a: 5, b: 123 }, { b: 6 }, );
-let res6 = extend(['asd', 123, ','], null, { a: 5 }, { b: 6 });
+// ==================================
 // ошибочные вызовы
-extend(false, { a: 5 }, { b: 6 }, false);
-// Argument of type 'false' is not assignable to parameter of type 'ISomeObject | null | undefined'.
-extend({ a: 5 }, { b: 6 }, 123, );
-// Argument of type '123' is not assignable to parameter of type 'ISomeObject | null | undefined'.
-extend(true, null, { a: 5 }, { b: 6 });
-// Argument of type 'null' is not assignable to parameter of type 'ISomeObject'.
-extend(undefined, null, { a: 5 }, { b: 6 });
+// ==================================
+// в отличие от решения на Typescript массивы в качестве объекта не подходят
+// ибо FLOW ругается на for .. in для массивов
+// можно было бы отрефакторить функцию, но так как цель этой функции мне неясна,
+// т.е. непонятно, подразумевается ли использование массивов
+// -------------------------------------------------------
+// так же для более строгой типизации я зафиксировал второй аргумент,
+// который может оказаться первым миксином, т.е. мог бы быть null или undefined
+// в данной реалиации это невозможно (в отличии от Typescript с условной типизацией второго аргумента)
+// extend({ a: 5 }, { b: 6 }, { a: 'a', b: 'abc' }, [ 11, 22, 33 ]);
+// extend({ a: 5 }, null, { a: 10, b: 20 }, { a: [1,2,3] }, [4,5,6] );
+// extend(['asd', 123, ','], null, { a: 5 }, { b: 6 });
+
+// // это "правильные" ошибки
+// extend(false, { a: 5 }, { b: 6 }, false);
+// // Argument of type 'false' is not assignable to parameter of type 'ISomeObject | null | undefined'.
+// extend({ a: 5 }, { b: 6 }, 123, );
+// // Argument of type '123' is not assignable to parameter of type 'ISomeObject | null | undefined'.
+// extend(true, null, { a: 5 }, { b: 6 });
+// // Argument of type 'null' is not assignable to parameter of type 'ISomeObject'.
+// extend(undefined, null, { a: 5 }, { b: 6 });
 // Argument of type 'undefined' is not assignable to parameter of type 'boolean | ISomeObject'.
+
+
+
+module.exports = extend;

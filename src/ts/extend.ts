@@ -1,5 +1,3 @@
-export default {};
-
 const hasOwnProperty: (k: string) => boolean = Object.prototype.hasOwnProperty;
 const toString: () => string = Object.prototype.toString;
 
@@ -134,3 +132,5 @@ extend(true, null, { a: 5 }, { b: 6 });
 // Argument of type 'null' is not assignable to parameter of type 'ISomeObject'.
 extend(undefined, null, { a: 5 }, { b: 6 });
 // Argument of type 'undefined' is not assignable to parameter of type 'boolean | ISomeObject'.
+
+export = extend;
