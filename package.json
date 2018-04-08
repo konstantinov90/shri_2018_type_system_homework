@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run build:ts && npm run build:flow && mocha test",
-    "build:ts": "tsc -p ./src/ts --outDir ./build/ts",
-    "build:flow": "babel ./src/flow -d ./build/flow",
+    "build:ts": "tsc ./src/ts/extend.ts --outDir ./build/ts/",
+    "build:flow": "babel ./src/flow -d ./build/flow/ --ignore ./src/flow/extendUsage.js",
     "flow": "flow"
   },
   "keywords": [],

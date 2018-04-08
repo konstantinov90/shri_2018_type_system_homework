@@ -2,7 +2,11 @@ const mocha = require('mocha');
 const { expect } = require('chai');
 
 for (const module of [ '../src/js/extend_original', '../build/flow/extend', '../build/ts/extend' ]) {
-  const extend = require(module);
+  let extend = require(module);
+  if (module.includes('ts')) {
+    extend = extend.default;
+  }
+
 
   describe(module, () => {
     describe('deep argument', () => {
@@ -27,7 +31,7 @@ for (const module of [ '../src/js/extend_original', '../build/flow/extend', '../
           },
         };
   
-        const ans = extend({}, false, obj);
+        const ans = extend(false, {}, obj);
         obj.b.c = 123;
         expect(ans).to.be.deep.equal(obj);
       });
